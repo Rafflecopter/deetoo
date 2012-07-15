@@ -1,0 +1,24 @@
+{
+  "name": "deetoo",
+  "version": "0.0.0",
+  "description": "A generic Rafflecopter node.js worker (droid)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Rafflecopter/deetoo.git"
+  },
+  "author": "Juan Patten",
+  "license": "BSD",
+
+  "dependencies": {
+      "underscore": "~1.3.3",
+      "async": "~0.1.22",
+      "redis": "~0.7.2",
+      "reds": "~0.1.4",
+      "kue": "~0.4.0",
+      "express": "~2.5.9"
+  }
+}
