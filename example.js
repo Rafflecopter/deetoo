@@ -5,19 +5,25 @@ var DeeToo = require('./lib/deetoo')
 
 
 d2.can('shiner', function(job, $done) {
+  function nextStep() {
+    job.progress(++step, 5)
+  }
+
+  function stop() {
+    clearTimeout(ticker)
+    $done()
+  }
+
+  var step = 0
+    , ticker = setInterval(nextStep, 2000)
+
+  setTimeout(stop, 10000)
+
   console.log('SHINER SHINER SHINER')
-  $done()
 })
 
 d2.speaks('http')
 
-d2.start(function(err) {
-  console.log('pushing sample job w/ timestamp id...')
-  d2.jobs.push('shiner', ''+(+new Date), {title:(+new Date)}, function(err) {
-    if (err)
-      return console.log('ERROR! - ' + err);
-    console.log('JOB SAVED')
-  })
-})
+d2.start()
 
 
