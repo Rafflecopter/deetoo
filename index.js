@@ -61,8 +61,7 @@ d2.preprocess('email', function(jobData, $done) {
 d2.Q.on('job failed', function(){})
 
 
-d2.speaks(['http', {port: config.www.port}],
-          ['0mq', {port: config.0mq.port}])
+d2.speaks('http')
 
 
 d2.start(SETUP, function(setupErr) {
