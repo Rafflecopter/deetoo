@@ -3,6 +3,16 @@ deetoo
 
 A generic Rafflecopter node.js worker (droid)
 
+## See it in action
+* cd into the folder
+* run `node _example.js`
+
+## How Do I Make It Do?
+* for now, read through `_example.js`
+
+
+
+
         
                      ______             
                   ,-'//__\\`-.          

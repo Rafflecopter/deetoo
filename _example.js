@@ -1,5 +1,5 @@
 
-var DeeToo = require('./lib/deetoo')
+var DeeToo = require('./index')
 
 ,   d2 = new DeeToo()
 
