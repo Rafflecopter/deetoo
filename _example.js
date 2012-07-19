@@ -3,6 +3,8 @@ var DeeToo = require('./index')
 
 ,   d2 = new DeeToo()
 
+//require('longjohn')
+
 
 d2.can('shiner', function(job, $done) {
   function nextStep() {

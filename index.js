@@ -3,6 +3,7 @@ var Dialects = require('./lib/dialects')
   , _ = require('underscore')
   , async = require('async')
   , Q = require('./lib/Q')
+  , log = require('book').default()
 
   , WWW = express.createServer(express.logger())
   , CONF = require('./config_default')
@@ -14,33 +15,17 @@ var Dialects = require('./lib/dialects')
   
   , _preprocs = {}
 
-  , raven, _errlog, JOBS
+  , JOBS
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~ Logging
-
-if (CONF.sentry) {
-  raven = require('raven')
-  _errlog = new raven.Client(CONF.sentry)
-}
-
-function LOGERR(msg) {
-  if (!_errlog)
-    return console.log('ERROR! - ' + msg);
-
-  if (! msg instanceof Error)
-    msg = new Error(msg);
-
-  _errlog.captureError(msg)
-}
-//~~
-
-
+//~~ Initializing 
 function INIT(config) {
   if (__init) return;
 
   CONF = _.extend(CONF, config)
+
+  CONF.log = log.use(require('./lib/sentry'))
 
   JOBS = new Q(CONF)
 
@@ -121,7 +106,8 @@ _.extend(DeeToo.prototype, {
       if (setupErr) return $done(setupErr);
 
       WWW.listen(CONF.port_www, function(err) {
-        console.log('Worker started. Admin UI on HTTP port ' + CONF.port_www)
+        var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www;
+        CONF.log.info(msg)
         $done(err)
       })
     }
