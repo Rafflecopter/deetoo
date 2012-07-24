@@ -1,11 +1,13 @@
 // We need this to build our post string
-var assert = require('assert')
+var assert = require('assert');
 var http = require('http');
+var default_config = require('./config_default');
 
 var CONF = {
      host: 'localhost'
-    ,port: '8008'
+    ,port: default_config.port_www.toString()
     ,path: '/api/v1/shiner/'+Math.round(Math.random()*1000000)+'/'
+    ,auth: default_config.auth
 }
 
 function testPushTask($done) {
@@ -25,7 +27,8 @@ function testPushTask($done) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': post_data.length
+            'Content-Length': post_data.length,
+            'authorization': 'Basic ' + new Buffer(CONF.auth.user+':'+CONF.auth.pass).toString('base64')
         }
     };
 
@@ -44,6 +47,9 @@ function testDeleteTask($done) {
         port: CONF.port,
         path: CONF.path,
         method: 'DELETE',
+        headers: {
+            'authorization': 'Basic ' + new Buffer(CONF.auth.user+':'+CONF.auth.pass).toString('base64')
+        }
     };
 
     // Set up the request
@@ -62,7 +68,7 @@ testPushTask(function(res) {
     setTimeout(function() {
         testDeleteTask(function(res) {
             assert.strictEqual(res.statusCode, 200, "Job was NOT deleted succesfully. Response code: " + res.statusCode)
-            console.log('Tried to delete task from queue...Response: '+res.statusCode)
+            console.log('Trying to delete task from queue...Response: '+res.statusCode)
         })
     }, 10000)
 })

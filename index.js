@@ -32,6 +32,8 @@ function INIT(config) {
   WWW.configure(function() {
     WWW.use(express.bodyParser())
   })
+  if (CONF.auth.user && CONF.auth.pass)
+    WWW.use(express.basicAuth(CONF.auth.user, CONF.auth.pass))
   WWW.use(Q.kue.app)
 
   __init = true
