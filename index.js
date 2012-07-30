@@ -131,3 +131,10 @@ _.extend(DeeToo.prototype, {
 module.exports = DeeToo
 
 
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ A Bad Thing has happened
+
+process.on('uncaughtException', function(err) {
+    CONF.log.error(err)
+})
