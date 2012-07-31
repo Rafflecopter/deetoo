@@ -132,9 +132,24 @@ module.exports = DeeToo
 
 
 
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ Process is being killed (happens on each new deploy)
+
+process.on('SIGTERM', function() {
+  CONF.log.info('Got SIGTERM. Shutting down when all jobs finish...')
+  JOBS.shutdown(function() {
+    CONF.log.info('Finished graceful shutdown')
+    process.exit(0)
+  }, 10000)
+})
+
+
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~ A Bad Thing has happened
 
 process.on('uncaughtException', function(err) {
     CONF.log.error(err)
 })
+

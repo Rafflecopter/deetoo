@@ -17,7 +17,7 @@ d2.can('shiner', function(job, $done) {
   }
 
   var step = 0
-    , ticker = setInterval(nextStep, 2000)
+    , ticker = setInterval(nextStep, 4000)
 
   setTimeout(stop, 10000)
 
