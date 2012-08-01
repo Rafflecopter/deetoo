@@ -25,7 +25,7 @@ function INIT(config) {
 
   CONF = _.extend(CONF, config)
 
-  CONF.log = log.use(require('./lib/sentry'))
+  CONF.log = log.use(require('./lib/sentry')(config))
 
   JOBS = new Q(CONF)
 
