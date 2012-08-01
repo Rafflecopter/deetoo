@@ -71,9 +71,14 @@ _.extend(DeeToo.prototype, {
   }
 
   //~~ Public Interface
-  ,can: function(jobType, proc) {
+  ,can: function(jobType, n, proc) {
+    if (! proc) {
+        proc = n
+        n = 1
+    }
+
     this.procs[jobType] = proc
-    JOBS.process(jobType, _procJob.call(this, jobType))
+    JOBS.process(jobType, n, _procJob.call(this, jobType))
 
     _.each(this.dialects, function(dia) {
       dia.allowJobType(jobType)
