@@ -55,6 +55,7 @@ var _procJob = function(jobType) {
 var DeeToo = function(config) {
   INIT(config)
   this.jobs = JOBS
+  this.log = CONF.log
 
   this.procs = {}
   this.preprocs = {}
