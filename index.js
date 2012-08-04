@@ -18,6 +18,8 @@ var Dialects = require('./lib/dialects')
   , JOBS
 
 
+
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~ One-time setup
 function INIT(config) {
@@ -40,6 +42,7 @@ function INIT(config) {
 
 
 
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~ Util Functions
 
@@ -50,6 +53,12 @@ var _procJob = function(jobType) {
 }
 //~~
 
+
+
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ Util Functions
 
 var DeeToo = function(config) {
   INIT(config)
@@ -130,6 +139,12 @@ _.extend(DeeToo.prototype, {
 
     async.parallel(setup, GO)
   }
+
+  ,shutdown: function($done) {
+    LOG.info('Shutting down when all jobs finish...')
+    JOBS.shutdown($done)
+  }
+
 })
 
 
