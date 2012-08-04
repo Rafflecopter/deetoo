@@ -17,12 +17,13 @@ var Dialects = require('./lib/dialects')
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~ One-time setup
+
 function INIT(config) {
   if (__init) return;
 
   CONF = _.extend(CONF, config)
 
-  LOG = LOG.use(require('./lib/sentry')(config))
+  LOG = LOG.use(require('./lib/sentry')(CONF))
 
   JOBS = Q.init(CONF)
 
