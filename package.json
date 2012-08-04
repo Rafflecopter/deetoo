@@ -1,7 +1,7 @@
 {
   "name": "deetoo",
-  "version": "0.0.0",
-  "description": "A generic Rafflecopter node.js worker (droid)",
+  "version": "0.0.1",
+  "description": "A multi-purpose worker droid for Node",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
