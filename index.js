@@ -97,6 +97,8 @@ _.extend(DeeToo.prototype, {
     _.each(this.dialects, function(dia) {
       dia.allowJobType(jobType)
     })
+
+    return this
   }
 
   ,speaks: function() {
@@ -117,6 +119,8 @@ _.extend(DeeToo.prototype, {
 
       inst.dialects[dia] = new Dialects[dia](options)
     })
+
+    return this
   }
   
   ,start: function(setup, $done) {
@@ -124,8 +128,11 @@ _.extend(DeeToo.prototype, {
       if (setupErr) return $done(setupErr);
 
       WWW.listen(CONF.port_www, function(err) {
-        var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www;
-        LOG.info(msg)
+        if (!err) {
+          var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www
+          LOG.info(msg)
+        }
+
         $done(err)
       })
     }
@@ -138,11 +145,15 @@ _.extend(DeeToo.prototype, {
     setup = _.isArray(setup) ? setup : [setup]
 
     async.parallel(setup, GO)
+
+    return this
   }
 
   ,shutdown: function($done) {
     LOG.info('Shutting down when all jobs finish...')
     JOBS.shutdown($done)
+
+    return this
   }
 
 })
