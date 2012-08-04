@@ -19,7 +19,7 @@ var Dialects = require('./lib/dialects')
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~ Initializing 
+//~~ One-time setup
 function INIT(config) {
   if (__init) return;
 
@@ -67,7 +67,7 @@ var DeeToo = function(config) {
 _.extend(DeeToo.prototype, {
 
   __init__: function() {
-    _.bindAll(this, 'can', 'preprocess', 'speaks', 'start')
+    _.bindAll(this, 'can', 'speaks', 'start')
   }
 
   //~~ Public Interface
@@ -83,10 +83,6 @@ _.extend(DeeToo.prototype, {
     _.each(this.dialects, function(dia) {
       dia.allowJobType(jobType)
     })
-  }
-
-  ,preprocess: function(jobType, preproc) {
-    _preprocs[jobType] = preproc
   }
 
   ,speaks: function() {
