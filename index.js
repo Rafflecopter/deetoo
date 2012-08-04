@@ -3,8 +3,8 @@ var Dialects = require('./lib/dialects')
   , _ = require('underscore')
   , async = require('async')
   , Q = require('./lib/Q')
-  , log = require('book').default()
 
+  , LOG = require('book').default()
   , WWW = express.createServer(express.logger())
   , CONF = require('./config_default')
 
@@ -54,7 +54,7 @@ var _procJob = function(jobType) {
 var DeeToo = function(config) {
   INIT(config)
   this.jobs = JOBS
-  this.log = CONF.log
+  this.log = LOG
 
   this.procs = {}
   this.preprocs = {}
@@ -110,7 +110,7 @@ _.extend(DeeToo.prototype, {
 
       WWW.listen(CONF.port_www, function(err) {
         var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www;
-        CONF.log.info(msg)
+        LOG.info(msg)
         $done(err)
       })
     }
@@ -138,9 +138,9 @@ module.exports = DeeToo
 //~~ Process is being killed (happens on each new deploy)
 
 process.on('SIGTERM', function() {
-  CONF.log.info('Got SIGTERM. Shutting down when all jobs finish...')
+  LOG.info('Got SIGTERM. Shutting down when all jobs finish...')
   JOBS.shutdown(function() {
-    CONF.log.info('Finished graceful shutdown')
+    LOG.info('Finished graceful shutdown')
     process.exit(0)
   }, 10000)
 })
@@ -151,6 +151,6 @@ process.on('SIGTERM', function() {
 //~~ A Bad Thing has happened
 
 process.on('uncaughtException', function(err) {
-    CONF.log.error(err)
+    LOG.error(err)
 })
 
