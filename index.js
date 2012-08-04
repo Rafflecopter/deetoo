@@ -25,9 +25,9 @@ function INIT(config) {
 
   CONF = _.extend(CONF, config)
 
-  CONF.log = log.use(require('./lib/sentry')(config))
+  LOG = LOG.use(require('./lib/sentry')(config))
 
-  JOBS = new Q(CONF)
+  JOBS = Q.init(CONF)
 
   WWW.use(express.bodyParser())
   WWW.use(Q.kue.app)
@@ -62,6 +62,12 @@ var DeeToo = function(config) {
 
   this.__init__()
 }
+
+
+DeeToo.init = function(config) {
+  return DeeToo.__singleton = DeeToo.__singleton || new DeeToo(config)
+}
+
 
 _.extend(DeeToo.prototype, {
 
@@ -124,8 +130,6 @@ _.extend(DeeToo.prototype, {
 
     async.parallel(setup, GO)
   }
-  //~~
-
 })
 
 
