@@ -103,7 +103,7 @@ _.extend(DeeToo.prototype, {
 
   ,speaks: function() {
     var arr = _.toArray(arguments)
-    ,   inst = this
+      , inst = this
       , options = {
            allowedJobTypes: _.keys(this.procs)
           ,server_www: WWW
@@ -123,28 +123,15 @@ _.extend(DeeToo.prototype, {
     return this
   }
   
-  ,start: function(setup, $done) {
-    function GO(setupErr) {
-      if (setupErr) return $done(setupErr);
+  ,start: function($done) {
+    WWW.listen(CONF.port_www, function(err) {
+      if (!err) {
+        var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www
+        LOG.info(msg)
+      }
 
-      WWW.listen(CONF.port_www, function(err) {
-        if (!err) {
-          var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www
-          LOG.info(msg)
-        }
-
-        $done(err)
-      })
-    }
-
-    if (!$done) {
-      $done = setup || function(){}
-      setup = [_asyncNull]
-    }
-
-    setup = _.isArray(setup) ? setup : [setup]
-
-    async.parallel(setup, GO)
+      $done(err)
+    })
 
     return this
   }
