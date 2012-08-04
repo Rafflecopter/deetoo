@@ -1,19 +1,14 @@
 var Dialects = require('./lib/dialects')
   , express = require('express')
   , _ = require('underscore')
-  , async = require('async')
   , Q = require('./lib/Q')
 
   , LOG = require('book').default()
   , WWW = express.createServer(express.logger())
   , CONF = require('./config_default')
 
-  , _asyncNull = function(f){f()}
-  
-  , __listening = false
+  , __running = false
   , __init = false
-  
-  , _preprocs = {}
 
   , JOBS
 
@@ -51,6 +46,7 @@ var _procJob = function(jobType) {
     this.procs[jobType](job, $done)
   }, this)
 }
+  
 //~~
 
 
@@ -128,6 +124,7 @@ _.extend(DeeToo.prototype, {
       if (!err) {
         var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www
         LOG.info(msg)
+        __running = true
       }
 
       $done(err)
@@ -137,8 +134,15 @@ _.extend(DeeToo.prototype, {
   }
 
   ,shutdown: function($done) {
+    if (! __running)
+      return;
+
     LOG.info('Shutting down when all jobs finish...')
-    JOBS.shutdown($done)
+    JOBS.shutdown(function() {
+      LOG.info('All jobs have completed. DeeToo is shut down.')
+    })
+
+    __running = false
 
     return this
   }
