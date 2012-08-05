@@ -1,4 +1,5 @@
 var Dialects = require('./lib/dialects')
+  , tu = require('./lib/time_utils')
   , express = require('express')
   , _ = require('underscore')
   , Q = require('./lib/Q')
@@ -47,6 +48,30 @@ var _procJob = function(jobType) {
     this.procs[jobType](job, $done)
   }, this)
 }
+
+var _cronData = function(jobType) {
+  return {title: ['CronJob [', jobType, ']'].join('')}
+}
+
+var _scheduleCron = function(jobType, freq, immediate) {
+  var envelope = {
+     jobType: jobType
+    ,jobData: _cronData(jobType)
+    //,id: 'CRON~'+jobType
+  }
+
+  if (! immediate)
+    envelope.when = tu.utc_timestamp() + freq;
+
+  JOBS.push(envelope, function(err){ if (err) LOG.error(err); })
+}
+
+var _cronJob = function(jobType, freq) {
+  return _.bind(function(job, $done) {
+    _scheduleCron(jobType, freq)
+    this.crons[jobType](job, $done)
+  }, this)
+}
   
 //~~
 
@@ -55,7 +80,7 @@ var _procJob = function(jobType) {
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~ Util Functions
+//~~ Worker
 
 var DeeToo = function(config) {
   INIT(config)
@@ -63,7 +88,7 @@ var DeeToo = function(config) {
   this.log = LOG
 
   this.procs = {}
-  this.preprocs = {}
+  this.crons = {}
   this.dialects = {}
 
   this.__init__()
@@ -78,15 +103,13 @@ DeeToo.init = function(config) {
 _.extend(DeeToo.prototype, {
 
   __init__: function() {
-    _.bindAll(this, 'can', 'speaks', 'start')
+    _.bindAll(this, 'can', 'speaks', 'start', 'cron')
   }
 
   //~~ Public Interface
   ,can: function(jobType, n, proc) {
-    if (! proc) {
-        proc = n
-        n = 1
-    }
+    // `n` is optional
+    if (!proc) { proc=n; n=1; }
 
     this.procs[jobType] = proc
     JOBS.process(jobType, n, _procJob.call(this, jobType))
@@ -94,6 +117,15 @@ _.extend(DeeToo.prototype, {
     _.each(this.dialects, function(dia) {
       dia.allowJobType(jobType)
     })
+
+    return this
+  }
+
+  ,cron: function(jobType, freq, proc, immediate) {
+    this.crons[jobType] = proc
+    JOBS.process(jobType, _cronJob.call(this, jobType, freq))
+
+    _scheduleCron(jobType, freq, immediate);
 
     return this
   }

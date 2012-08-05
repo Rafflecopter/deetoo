@@ -42,10 +42,18 @@ function processDemonstration(job, $done) {
 }
 
 
+function demoCron(job, $done) {
+  console.log('CRON FIGHTS FOR THE USER')
+  $done()
+}
+
+
 
 // Launch the worker
 d2
   .can('demonstrate', 4, processDemonstration)
+
+  .cron('democron', 4000, demoCron)
 
   .start(function(err) {
     console.log('Example worker has started!')
