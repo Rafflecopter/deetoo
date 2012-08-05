@@ -1,3 +1,5 @@
+require('longjohn')
+
 var DeeToo = require('..')
   , d2 = DeeToo.init()
 
@@ -16,9 +18,8 @@ function _generateJobs() {
     })
   }
 
-  for (var j=0; j<1; j++) {
-      console.log('creating #' + j)
-      d2.jobs.push(mkjob(j), showUpdates)
+  for (var j=0; j<20; j++) {
+    d2.jobs.push(mkjob(j), showUpdates)
   }
 }
 
@@ -30,6 +31,7 @@ function processDemonstration(job, $done) {
 
   function stop() {
     clearTimeout(ticker)
+    console.log(['Job', job.id, 'finished!'].join(' '))
     $done()
   }
 
@@ -43,8 +45,6 @@ function processDemonstration(job, $done) {
 
 // Launch the worker
 d2
-  .speaks('http')
-
   .can('demonstrate', 4, processDemonstration)
 
   .start(function(err) {
@@ -57,10 +57,11 @@ setTimeout(_generateJobs, 1)
 
 // Demonstrate graceful shutdown
 setTimeout(function() {
-  console.log('([ shutting down ])')
+  console.log('\n([~ shutting down ~])\n')
 
   d2.shutdown(function() {
-    console.log('([ SHUT DOWN ])')
+    console.log('\n([~ SHUT DOWN ~])\n')
+    setTimeout(function(){ process.exit(0) }, 1000)
   })
 }, JOB_TIME * 2.3)
 
