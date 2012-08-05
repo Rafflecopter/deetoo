@@ -137,8 +137,8 @@ _.extend(DeeToo.prototype, {
 
     LOG.info('Shutting down when all jobs finish...')
     JOBS.shutdown(function() {
-      LOG.info('All jobs have completed. DeeToo is shut down.')
       $done()
+      LOG.info('All active jobs have completed. DeeToo is shut down.')
     })
 
     __running = false
