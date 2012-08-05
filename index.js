@@ -25,7 +25,7 @@ function INIT(config) {
 
   LOG = LOG.use(require('./lib/sentry')(CONF))
 
-  JOBS = Q.init(CONF)
+  JOBS = Q.init(CONF, LOG)
 
   WWW.use(express.bodyParser())
   WWW.use(Q.kue.app)
