@@ -49,6 +49,13 @@ var _procJob = function(jobType) {
   }, this)
 }
 
+var _cronJob = function(jobType, freq) {
+  return _.bind(function(job, $done) {
+    _scheduleCron(jobType, freq)
+    this.crons[jobType](job, $done)
+  }, this)
+}
+
 var _cronData = function(jobType) {
   return {title: ['CronJob [', jobType, ']'].join('')}
 }
@@ -64,13 +71,6 @@ var _scheduleCron = function(jobType, freq, immediate) {
     envelope.when = tu.utc_timestamp() + freq;
 
   JOBS.push(envelope, function(err){ if (err) LOG.error(err); })
-}
-
-var _cronJob = function(jobType, freq) {
-  return _.bind(function(job, $done) {
-    _scheduleCron(jobType, freq)
-    this.crons[jobType](job, $done)
-  }, this)
 }
   
 //~~
