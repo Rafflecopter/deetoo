@@ -1,6 +1,8 @@
 require('longjohn')
 
 var DeeToo = require('..')
+  , util = require('../lib/util.js')
+  , _ = require('underscore')
   , d2 = DeeToo.init()
 
   , JOB_TIME = 5000
@@ -13,12 +15,26 @@ function _generateJobs() {
   }
 
   function showUpdates(err, job) {
+    if (err)
+      throw err;
     job.on('progress', function(prog) {
       console.log(['Job', job.id, '@', prog, '%'].join(' '))
     })
   }
 
-  for (var j=0; j<20; j++) {
+
+
+
+  // TODO: check to see if job being replaced correctly if added twice
+  // TODO: check to see if job being replaced if delayed and added again
+
+
+
+
+
+
+  for (var j=0; j<1; j++) {
+    d2.jobs.push(mkjob(j), showUpdates)
     d2.jobs.push(mkjob(j), showUpdates)
   }
 }
@@ -53,7 +69,7 @@ function demoCron(job, $done) {
 d2
   .can('demonstrate', 4, processDemonstration)
 
-  .cron('democron', 4000, demoCron)
+  //.cron('democron', 4000, demoCron)
 
   .start(function(err) {
     console.log('Example worker has started!')

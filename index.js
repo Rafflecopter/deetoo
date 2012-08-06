@@ -1,8 +1,10 @@
 var Dialects = require('./lib/dialects')
-  , tu = require('./lib/time_utils')
+  , util = require('./lib/util')
   , express = require('express')
   , _ = require('underscore')
+  , async = require('async')
   , Q = require('./lib/Q')
+  , fs = require('fs')
 
   , LOG = require('book').default()
   , WWW = express.createServer(express.logger())
@@ -68,7 +70,7 @@ var _scheduleCron = function(jobType, freq, immediate) {
   }
 
   if (! immediate)
-    envelope.when = tu.utc_timestamp() + freq;
+    envelope.when = util.utc_timestamp() + freq;
 
   JOBS.push(envelope, function(err){ if (err) LOG.error(err); })
 }
@@ -84,14 +86,14 @@ var _scheduleCron = function(jobType, freq, immediate) {
 
 var DeeToo = function(config) {
   INIT(config)
+  this.__init__()
+
   this.jobs = JOBS
   this.log = LOG
 
   this.procs = {}
   this.crons = {}
   this.dialects = {}
-
-  this.__init__()
 }
 
 
