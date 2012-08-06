@@ -34,7 +34,7 @@ function processDemonstration(job, $done) {
   function nextStep(){ job.progress(++step, 5) }
 
   function stop() {
-    clearTimeout(ticker)
+    clearInterval(ticker)
     console.log(['Job', job.id, 'finished!'].join(' '))
     $done()
   }
