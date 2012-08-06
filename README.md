@@ -73,6 +73,9 @@ There are a couple of ways to create a new job:
     * `callback` will be called when the job has been pushed to the queue
 
 
+## What options can be configured?
+_DOCUMENTATION COMING SOON_
+
 ## How do I make it speak another protocol?
 _DOCUMENTATION COMING SOON_
 
