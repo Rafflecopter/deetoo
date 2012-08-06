@@ -131,15 +131,18 @@ _.extend(DeeToo.prototype, {
     return this
   }
 
-  ,shutdown: function($done) {
+  ,shutdown: function(timeout, $done) {
     if (! __running)
       return;
+
+    if (! $done)
+      $done=timeout, timeout=null;
 
     LOG.info('Shutting down when all jobs finish...')
     JOBS.shutdown(function() {
       LOG.info('All active jobs have completed. DeeToo is shut down.')
       $done()
-    })
+    }, timeout)
 
     __running = false
 
