@@ -11,7 +11,7 @@ var DeeToo = require('..')
 function _generateJobs() {
   function mkjob(i) {
     var id = 'demo'+j
-    return {id:id, jobType:'demonstrate', jobData:{title: id}}
+    return {jobType:'demonstrate', jobData:{title: id}}
   }
 
   function showUpdates(err, job) {
@@ -22,19 +22,7 @@ function _generateJobs() {
     })
   }
 
-
-
-
-  // TODO: check to see if job being replaced correctly if added twice
-  // TODO: check to see if job being replaced if delayed and added again
-
-
-
-
-
-
-  for (var j=0; j<1; j++) {
-    d2.jobs.push(mkjob(j), showUpdates)
+  for (var j=0; j<20; j++) {
     d2.jobs.push(mkjob(j), showUpdates)
   }
 }
