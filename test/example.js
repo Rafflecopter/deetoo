@@ -28,7 +28,7 @@ function _generateJobs() {
 }
 
 
-// An example process that takes 5 seconds to run
+// An example task that takes 5 seconds to run
 // and updates its progress every second.
 function processDemonstration(job, $done) {
   function nextStep(){ job.progress(++step, 5) }
@@ -46,18 +46,9 @@ function processDemonstration(job, $done) {
 }
 
 
-function demoCron(job, $done) {
-  console.log('CRON FIGHTS FOR THE USER')
-  $done()
-}
-
-
-
 // Launch the worker
 d2
   .can('demonstrate', 4, processDemonstration)
-
-  //.cron('democron', 4000, demoCron)
 
   .start(function(err) {
     console.log('Example worker has started!')
@@ -73,7 +64,7 @@ setTimeout(function() {
 
   d2.shutdown(function() {
     console.log('\n([~ SHUT DOWN ~])\n')
-    setTimeout(function(){ process.exit(0) }, 1000)
+    process.exit(0)
   })
 }, JOB_TIME * 2.3)
 

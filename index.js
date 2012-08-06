@@ -50,30 +50,6 @@ var _procJob = function(jobType) {
     this.procs[jobType](job, $done)
   }, this)
 }
-
-var _cronJob = function(jobType, freq) {
-  return _.bind(function(job, $done) {
-    _scheduleCron(jobType, freq)
-    this.crons[jobType](job, $done)
-  }, this)
-}
-
-var _cronData = function(jobType) {
-  return {title: ['CronJob [', jobType, ']'].join('')}
-}
-
-var _scheduleCron = function(jobType, freq, immediate) {
-  var envelope = {
-     jobType: jobType
-    ,jobData: _cronData(jobType)
-    //,id: 'CRON~'+jobType
-  }
-
-  if (! immediate)
-    envelope.when = util.utc_timestamp() + freq;
-
-  JOBS.push(envelope, function(err){ if (err) LOG.error(err); })
-}
   
 //~~
 
@@ -92,7 +68,6 @@ var DeeToo = function(config) {
   this.log = LOG
 
   this.procs = {}
-  this.crons = {}
   this.dialects = {}
 }
 
@@ -105,7 +80,7 @@ DeeToo.init = function(config) {
 _.extend(DeeToo.prototype, {
 
   __init__: function() {
-    _.bindAll(this, 'can', 'speaks', 'start', 'cron')
+    _.bindAll(this, 'can', 'speaks', 'start')
   }
 
   //~~ Public Interface
@@ -119,15 +94,6 @@ _.extend(DeeToo.prototype, {
     _.each(this.dialects, function(dia) {
       dia.allowJobType(jobType)
     })
-
-    return this
-  }
-
-  ,cron: function(jobType, freq, proc, immediate) {
-    this.crons[jobType] = proc
-    JOBS.process(jobType, _cronJob.call(this, jobType, freq))
-
-    _scheduleCron(jobType, freq, immediate);
 
     return this
   }
