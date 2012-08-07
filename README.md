@@ -56,6 +56,7 @@ DeeToo exposes 4 core methods:
 
 ### Push a new job
 
+#### What is a "Job"?
 A DeeToo job is an object w/ these properties:
 * `jobType` - type of job (ie. "email", "video conversion", etc...)
 * `jobData` - an object of custom data your job needs (ie. email_address, subject, etc...). 
@@ -64,6 +65,7 @@ A DeeToo job is an object w/ these properties:
 * `[when]` - _optional_ A UTC timestamp (in milliseconds) specifying the date/time the job should be run.
     * _DeeToo "promotes" scheduled jobs every 5 seconds, so you're limited to 5-second granularity. This will likely change in the future._
 
+#### Push it into the queue
 There are a couple of ways to create a new job:
 * DeeToo's public API:
     * **HTTP dialect**: Send a `POST` to `/api/v1/<job_type>/<id>`
