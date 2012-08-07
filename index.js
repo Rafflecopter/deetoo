@@ -135,16 +135,16 @@ _.extend(DeeToo.prototype, {
     if (! __running)
       return;
 
-    if (! $done)
+    if (! $done)    // timeout is optional
       $done=timeout, timeout=null;
+
+    __running = false
 
     LOG.info('Shutting down when all jobs finish...')
     JOBS.shutdown(function() {
       LOG.info('All active jobs have completed. DeeToo is shut down.')
       $done()
     }, timeout)
-
-    __running = false
 
     return this
   }
@@ -161,11 +161,14 @@ module.exports = DeeToo
 //~~ Process is being killed (happens on each new deploy)
 
 process.on('SIGTERM', function() {
-  LOG.info('Got SIGTERM. Shutting down when all jobs finish...')
-  JOBS.shutdown(function() {
-    LOG.info('Finished graceful shutdown')
-    process.exit(0)
-  }, CONF.sigterm_shutdown_timeout)
+  LOG.info('([~~~ Got SIGTERM ~~~])')
+
+  if (DeeToo.__singleton) {
+    DeeToo.__singleton.shutdown(CONF.sigterm_shutdown_timeout, function() {
+      LOG.info('([~~~ Exiting ~~~])')
+      process.exit(0)
+    })
+  }
 })
 
 
