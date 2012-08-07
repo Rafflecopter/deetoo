@@ -165,7 +165,7 @@ process.on('SIGTERM', function() {
   JOBS.shutdown(function() {
     LOG.info('Finished graceful shutdown')
     process.exit(0)
-  }, 10000)
+  }, CONF.sigterm_shutdown_timeout)
 })
 
 

@@ -3,6 +3,8 @@ var SECONDS = 1000
 
 module.exports = {
      port_www:  8888
+
+    ,sigterm_shutdown_timeout: 10 * SECONDS
     
     ,garbage_collect: {
         outfile: function(job) {
