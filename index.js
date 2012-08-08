@@ -10,7 +10,7 @@ var Dialects = require('./lib/dialects')
   , WWW = express.createServer(express.logger())
   , CONF = require('./config_default')
 
-  , __running = false
+  , __running = {process:false, listen:false}
   , __init = false
 
   , JOBS
@@ -51,6 +51,27 @@ var _procJob = function(jobType) {
   }, this)
 }
   
+var _stopProcessing = function($done) {
+  LOG.info('Shutting down when all active jobs have finished...')
+  JOBS.shutdown(function() {
+    LOG.info('All active jobs have completed. DeeToo is not processing jobs.')
+    $done()
+  }, timeout)
+}
+
+var _stopListening = function($done) {
+  function dstop(d, $_done){ d.shutdown($_done) }
+
+  var self = this
+
+  LOG.info('Shutting down all listeners...')
+  async.forEach(this.dialects, dstop, function(err) {
+    if (err) return $_done(err);
+    self.server.close($done)
+    LOG.info('All listeners have stopped listening.')
+  })
+}
+
 //~~
 
 
@@ -118,11 +139,12 @@ _.extend(DeeToo.prototype, {
   }
   
   ,start: function($done) {
+
     WWW.listen(CONF.port_www, function(err) {
       if (!err) {
         var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www
         LOG.info(msg)
-        __running = true
+        __running.listen = true
       }
 
       $done(err)
@@ -131,22 +153,34 @@ _.extend(DeeToo.prototype, {
     return this
   }
 
-  ,shutdown: function(timeout, $done) {
-    if (! __running)
+  ,shutdown: function(timeout, stopListening, $done) {
+    function _optArgs() {   // timeout & stopListening are both optional
+      if (stopListening === undefined)
+          $done=timeout, timeout=null;
+      else if (! $done)
+          $done=stopListening, stopListening=null;
+    }
+
+    var flow = []
+      , self = this
+
+    _optArgs()
+
+    if ((! __running.process) && (! (stopListening && __running.listen)))
       return;
 
-    if (! $done)    // timeout is optional
-      $done=timeout, timeout=null;
+    // Determine which functions need to be run
+    __running.process && flow.push(stopProcessing)
+    stopListening && __running.listen && flow.push(stopListening)
 
-    __running = false
+    // Set flags
+    __running.process = false
+    stopListening && (__running.listen = false)
 
-    LOG.info('Shutting down when all jobs finish...')
-    JOBS.shutdown(function() {
-      LOG.info('All active jobs have completed. DeeToo is shut down.')
-      $done()
-    }, timeout)
+    // Stop whatever should be stopped
+    async.parallel(flow, $done)
 
-    return this
+    return this     // chain
   }
 
 })
