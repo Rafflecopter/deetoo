@@ -13,6 +13,9 @@ var Dialects = require('./lib/dialects')
   , __running = {process:false, listen:false}
   , __init = false
 
+  , __processors = {}
+  , __dialects = {}
+
   , JOBS
 
 
@@ -45,18 +48,50 @@ function INIT(config) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~ Util Functions
 
-var _procJob = function(jobType) {
-  return _.bind(function(job, $done) {
-    this.procs[jobType](job, $done)
-  }, this)
+var _startProcessing = function($done) {
+  function procType(kv, $_done) {
+    var jobType=kv[0], func=kv[1]
+    JOBS.process(jobType, func._concurrent, func)
+    $_done()
+  }
+
+  // TODO: wouldn't need to do this if async.forEach() took an object
+  var _procs = _.zip(_.keys(__processors), _.values(__processors))
+
+  async.forEach(_procs, procType, function(err) {
+    if (err) return $done(err);
+    __running.process = true
+    $done()
+  })
 }
   
-var _stopProcessing = function($done) {
-  LOG.info('Shutting down when all active jobs have finished...')
+var _stopProcessing = function(timeout, $done) {
+  LOG.info('([> Shutting down when all active jobs have finished... <])')
   JOBS.shutdown(function() {
-    LOG.info('All active jobs have completed. DeeToo is not processing jobs.')
+    __running.process = false
+    LOG.info('([> All active jobs have completed. DeeToo is NOT processing jobs. <])')
     $done()
   }, timeout)
+}
+
+var _startListening = function($done) {
+  function diaListen(dia, $_done) {
+    dia.listen($_done)
+  }
+
+  async.forEach(__dialects, diaListen, function(err) {
+    if (err || WWW._handle)     // _handle means server is already listening
+      return $done(err);
+
+    WWW.listen(CONF.port_www, function(err) {
+      if (!err) {
+        var msg = 'Admin UI on port ' + CONF.port_www
+        __running.listen = true
+        LOG.info(msg)
+      }
+      $done(err)
+    })
+  })
 }
 
 var _stopListening = function($done) {
@@ -64,11 +99,12 @@ var _stopListening = function($done) {
 
   var self = this
 
-  LOG.info('Shutting down all listeners...')
-  async.forEach(this.dialects, dstop, function(err) {
+  LOG.info('([> Shutting down all listeners... <])')
+  async.forEach(__dialects, dstop, function(err) {
     if (err) return $_done(err);
-    self.server.close($done)
-    LOG.info('All listeners have stopped listening.')
+    WWW.close($done)
+    __running.listen = false
+    LOG.info('([> All listeners have stopped listening. <])')
   })
 }
 
@@ -87,9 +123,6 @@ var DeeToo = function(config) {
 
   this.jobs = JOBS
   this.log = LOG
-
-  this.procs = {}
-  this.dialects = {}
 }
 
 
@@ -101,7 +134,7 @@ DeeToo.init = function(config) {
 _.extend(DeeToo.prototype, {
 
   __init__: function() {
-    _.bindAll(this, 'can', 'speaks', 'start')
+    _.bindAll(this, 'can', 'speaks', 'start', 'shutdown')
   }
 
   //~~ Public Interface
@@ -109,10 +142,10 @@ _.extend(DeeToo.prototype, {
     // `n` is optional
     if (!proc) { proc=n; n=1; }
 
-    this.procs[jobType] = proc
-    JOBS.process(jobType, n, _procJob.call(this, jobType))
+    proc._concurrent = n
+    __processors[jobType] = proc
 
-    _.each(this.dialects, function(dia) {
+    _.each(__dialects, function(dia) {
       dia.allowJobType(jobType)
     })
 
@@ -123,7 +156,7 @@ _.extend(DeeToo.prototype, {
     var arr = _.toArray(arguments)
       , inst = this
       , options = {
-           allowedJobTypes: _.keys(this.procs)
+           allowedJobTypes: _.keys(__processors)
           ,server_www: WWW
           ,jobs: JOBS
         }
@@ -139,26 +172,27 @@ _.extend(DeeToo.prototype, {
   }
   
   ,start: function($done) {
+    var flow = []
 
-    WWW.listen(CONF.port_www, function(err) {
-      if (!err) {
-        var msg = 'Worker started. Admin UI on HTTP port ' + CONF.port_www
-        LOG.info(msg)
-        __running.listen = true
-      }
+    !__running.process && flow.push(_startProcessing)
+    !__running.listen && flow.push(_startListening)
 
-      $done(err)
+    // TODO: can this be parallel?
+    async.series(flow, function(err) {
+      LOG.info('([> DeeToo has started listening & processing jobs <])')
+      $done()
     })
-
-    return this
   }
 
-  ,shutdown: function(timeout, stopListening, $done) {
-    function _optArgs() {   // timeout & stopListening are both optional
-      if (stopListening === undefined)
-          $done=timeout, timeout=null;
-      else if (! $done)
-          $done=stopListening, stopListening=null;
+  ,shutdown: function(timeout, deaf, $done) {
+    function _optArgs() {   // timeout & deaf are both optional
+      if (deaf === undefined) {
+        $done=timeout; timeout=null;
+      } else if (! $done) { // infer which arg was passed
+        $done = deaf;
+        deaf = !_.isFinite(timeout) ? timeout : null
+        timeout = !!deaf ? null : timeout
+      }
     }
 
     var flow = []
@@ -166,16 +200,9 @@ _.extend(DeeToo.prototype, {
 
     _optArgs()
 
-    if ((! __running.process) && (! (stopListening && __running.listen)))
-      return;
-
     // Determine which functions need to be run
-    __running.process && flow.push(stopProcessing)
-    stopListening && __running.listen && flow.push(stopListening)
-
-    // Set flags
-    __running.process = false
-    stopListening && (__running.listen = false)
+    __running.process && flow.push(_.bind(_stopProcessing, null, timeout))
+    deaf && __running.listen && flow.push(_stopListening)
 
     // Stop whatever should be stopped
     async.parallel(flow, $done)
