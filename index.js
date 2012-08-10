@@ -162,10 +162,10 @@ _.extend(DeeToo.prototype, {
         }
 
     arr.forEach(function(dia) {
-      if ((! _.has(Dialects, dia)) || _.has(inst.dialects, dia))
+      if ((! _.has(Dialects, dia)) || _.has(__dialects, dia))
         return;
 
-      inst.dialects[dia] = new Dialects[dia](options)
+      __dialects[dia] = new Dialects[dia](options)
     })
 
     return this
