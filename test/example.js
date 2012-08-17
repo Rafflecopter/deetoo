@@ -5,7 +5,7 @@ var DeeToo = require('..')
   , _ = require('underscore')
   , d2 = DeeToo.init()
 
-  , JOB_TIME = 20000
+  , JOB_TIME = 5000
   , NUM_JOBS = 8
 
 
