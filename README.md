@@ -72,9 +72,9 @@ You can push a job to DeeToo in one of 2 ways: use the worker's public API, or p
 DeeToo can speak any protocol, but ships w/ HTTP by default. Use it like this:
 
 ```
-POST /api/v1/<job_type>/<job_id>
+POST /api/v2/<job_type>
 ```
-The POST body should be a JSON-encoded object, containing a `.jobData` property, and (optionally) a `.when`
+The POST body should be a JSON-encoded object, containing a `.jobData` property, and (optionally) a `.when` & `.id`
 
 #### From w/in your code:
 If you want to push a job from w/in the worker itself, you can use:
