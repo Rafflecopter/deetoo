@@ -16,6 +16,8 @@ var Dialects = require('./lib/dialects')
   , __processors = {}
   , __dialects = {}
 
+  , _nullfunc = function(){}
+
   , JOBS
 
 
@@ -174,6 +176,8 @@ _.extend(DeeToo.prototype, {
   ,start: function($done) {
     var flow = []
 
+    $done = $done || _nullfunc
+
     !__running.process && flow.push(_startProcessing)
     !__running.listen && flow.push(_startListening)
 
@@ -193,6 +197,8 @@ _.extend(DeeToo.prototype, {
         deaf = !_.isFinite(timeout) ? timeout : null
         timeout = !!deaf ? null : timeout
       }
+
+      $done = $done || _nullfunc
     }
 
     var flow = []
