@@ -11,6 +11,8 @@ var d2 = require('DeeToo').init();
 d2.can('email', sendEmail).speaks('http').start();
 ```
 
+_(pro tip: check out [DeeToo Skeleton](https://github.com/Rafflecopter/deetoo_skeleton))_
+
 You could use DeeToo for email sending, report generation, rendering, backups, etc... At [Rafflecopter](http://www.rafflecopter.com), we use it for almost everything.
 
 It features these awesome things, right out of the box:
