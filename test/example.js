@@ -5,7 +5,7 @@ var DeeToo = require('..')
   , _ = require('underscore')
   , d2 = DeeToo.init()
 
-  , JOB_TIME = 5000
+  , JOB_TIME = 20000
   , NUM_JOBS = 8
 
 
@@ -30,7 +30,7 @@ function _shutdown(exit) {
 function _generateJobs() {
   function mkjob(i) {
     var id = 'demo'+j
-    return {jobType:'demonstrate', jobData:{title: id}}
+    return {jobType:'demonstrate', jobData:{title: id}, id:id}
   }
 
   function showUpdates(err, job) {
@@ -68,6 +68,8 @@ function processDemonstration(job, $done) {
 // Launch the worker
 d2
   .can('demonstrate', 4, processDemonstration)
+
+  .speaks('http')
 
   .start(function(err) {
     console.log('Example worker has started!')
