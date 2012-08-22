@@ -123,8 +123,13 @@ var DeeToo = function(config) {
   INIT(config)
   this.__init__()
 
-  this.jobs = JOBS
   this.log = LOG
+  this.jobs = JOBS
+
+  this._ = {
+     www: WWW
+    ,redis: JOBS._rawQueue.client
+  }
 }
 
 

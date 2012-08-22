@@ -177,6 +177,10 @@ You can access the raw Kue instance via `d2.jobs._rawQueue`
 
 You can access DeeToo's logger via `d2.log`. To learn how to use it, see the [node-book](https://github.com/shtylman/node-book) project.
 
+DeeToo shares some of the things it uses, so you can use them, too. They're accessed via `d2._`
+* `d2._.www` - the [Express](https://github.com/visionmedia/express) server
+* `d2._.redis` - the connected redis client
+
 <br/><hr/><br/>
 
 ## Configuration Options
