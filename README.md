@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/Rafflecopter/deetoo.png)](http://travis-ci.org/Rafflecopter/deetoo)
 DeeToo
 ======
 
