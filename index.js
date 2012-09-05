@@ -35,11 +35,11 @@ function INIT(config) {
 
   JOBS = Q.init(CONF, LOG)
 
-  WWW.use(express.bodyParser())
-  WWW.use(Q.kue.app)
-
   if (CONF.auth)
     WWW.use(express.basicAuth(CONF.auth.user, CONF.auth.pass));
+
+  WWW.use(express.bodyParser())
+  WWW.use(Q.kue.app)
 
   __init = true
 }
