@@ -1,6 +1,6 @@
 {
   "name": "deetoo",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A multi-purpose worker droid for Node",
   "main": "index.js",
   "scripts": {
