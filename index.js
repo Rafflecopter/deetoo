@@ -85,7 +85,7 @@ var _startListening = function($done) {
     if (err || WWW._handle)     // _handle means server is already listening
       return $done(err);
 
-    WWW.listen(CONF.port_www, function(err) {
+    WWW.listen(CONF.port_www, CONF.hostname_www, function(err) {
       if (!err) {
         var msg = 'Admin UI on port ' + CONF.port_www
         __running.listen = true
