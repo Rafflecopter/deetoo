@@ -77,19 +77,18 @@ var _stopProcessing = function(timeout, $done) {
 }
 
 var _startListening = function($done) {
-  function diaListen(dia, $_done) {
-    dia.listen($_done)
-  }
+  var _bind = function(dia){ return _.bind(dia.listen, dia) }
+    , _listeners = _.map(__dialects, _bind)
 
-  async.forEach(__dialects, diaListen, function(err) {
+  async.parallel(_listeners, function(err) {
     if (err || WWW._handle)     // _handle means server is already listening
       return $done(err);
 
     WWW.listen(CONF.port_www, CONF.hostname_www, function(err) {
       if (!err) {
-        var msg = 'Admin UI on port ' + CONF.port_www
+        var msg = 'Admin UI running on '
         __running.listen = true
-        LOG.info(msg)
+        LOG.info(msg + [CONF.hostname_www, CONF.port_www].join(':'))
       }
       $done(err)
     })
