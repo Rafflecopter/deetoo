@@ -24,8 +24,8 @@ jobs.on('error', function(err) {
 //}
 
 
-setTimeout(function() {
-    console.log('shutting down...')
-    jobs.shutdown(function(){console.log('SHUT DOWN');process.exit(0)})
-}, 2300)
+//setTimeout(function() {
+    //console.log('shutting down...')
+    //jobs.shutdown(function(){console.log('SHUT DOWN');process.exit(0)})
+//}, 2300)
 
