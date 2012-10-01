@@ -5,5 +5,6 @@ module.exports = {
      port_www:  8888
     ,sigterm_shutdown_timeout: 5 * MINUTES
     ,garbage_collect: true
+    ,admin_url_prefix: 'd2'
 }
 

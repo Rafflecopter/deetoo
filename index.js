@@ -39,7 +39,7 @@ function INIT(config) {
     WWW.use(express.basicAuth(CONF.auth.user, CONF.auth.pass));
 
   WWW.use(express.bodyParser())
-  WWW.use(Q.kue.app)
+  WWW.use('/'+CONF.admin_url_prefix, Q.kue.app)
 
   __init = true
 }
