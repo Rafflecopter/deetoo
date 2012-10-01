@@ -36,7 +36,8 @@ function INIT(config) {
   JOBS = Q.init(CONF, LOG)
 
   if (CONF.auth)
-    WWW.use(express.basicAuth(CONF.auth.user, CONF.auth.pass));
+    WWW.use('/'+CONF.admin_url_prefix,
+            express.basicAuth(CONF.auth.user, CONF.auth.pass));
 
   WWW.use(express.bodyParser())
   WWW.use('/'+CONF.admin_url_prefix, Q.kue.app)
