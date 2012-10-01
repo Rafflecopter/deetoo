@@ -166,6 +166,7 @@ _.extend(DeeToo.prototype, {
            allowedJobTypes: _.keys(__processors)
           ,server_www: WWW
           ,jobs: JOBS
+          ,_config: CONF
         }
 
     arr.forEach(function(dia) {
