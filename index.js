@@ -31,7 +31,7 @@ function INIT(config) {
 
   CONF = _.extend(CONF, config)
 
-  LOG = LOG.use(require('./lib/sentry')(CONF))
+  LOG = LOG.use(require('./lib/sentry')(CONF.sentry))
 
   JOBS = Q.init(CONF, LOG)
 
@@ -245,11 +245,9 @@ process.on('SIGTERM', function() {
 })
 
 
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~ A Bad Thing has happened
 
 process.on('uncaughtException', function(err) {
     LOG.error(err)
 })
-
