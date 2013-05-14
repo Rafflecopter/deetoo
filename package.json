@@ -13,14 +13,14 @@
   "author": "Juan Patten",
   "license": "BSD",
   "dependencies": {
-    "underscore": "~1.3.3",
-    "async": "~0.1.22",
-    "redis": "~0.7.2",
-    "reds": "~0.1.4",
-    "jade": "~0.26.3",
+    "underscore": "1.3.3",
+    "async": "0.1.22",
+    "redis": "0.7.2",
+    "reds": "0.1.4",
+    "jade": "0.26.3",
     "kue": "git+https://github.com/Rafflecopter/kue#master",
-    "express": "~2.5.9",
-    "book": "~1.3.0",
-    "raven": "~0.5.1"
+    "express": "2.5.9",
+    "book": "1.3.0",
+    "raven": "0.5.1"
   }
 }
