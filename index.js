@@ -135,16 +135,21 @@ var DeeToo = function(config) {
 
   // Memory management
   HEAPSNAP = new memwatch.HeapDiff()
-  //setTimeout(function() {
+  //setTimeout(function(info) {
   memwatch.on('leak', function(info) {
-    if (process.memoryUsage().rss > 0) {
+    if (process.memoryUsage().rss > (CONF.rss_threshold || 128000000)) {
       this.shutdown(CONF.sigterm_shutdown_timeout, function() {
-        LOG.info('Heap Diff: \n', u.inspect(HEAPSNAP.end(), false, null))
+        LOG.warn('Leak detected ---> Heap Diff: \n', 
+                 u.inspect(HEAPSNAP.end(), false, null))
 
         LOG.info('([~~~ Exiting ~~~])')
 
         process.exit(0)
       })
+
+    } else {
+        LOG.info('Possible leak detected: \n', 
+                 u.inspect(info || {}, false, null))
     }
   }.bind(this))
   //}.bind(this), 1000)
