@@ -1,9 +1,11 @@
 var Dialects = require('./lib/dialects')
   , util = require('./lib/util')
   , express = require('express')
+  , memwatch = require('memwatch')
   , _ = require('underscore')
   , async = require('async')
   , Q = require('./lib/Q')
+  , u = require('util')
   , fs = require('fs')
 
   , LOG = require('book').default()
@@ -18,7 +20,7 @@ var Dialects = require('./lib/dialects')
 
   , _nullfunc = function(){}
 
-  , JOBS
+  , JOBS, HEAPSNAP
 
 
 
@@ -130,6 +132,22 @@ var DeeToo = function(config) {
      www: WWW
     ,redis: JOBS._rawQueue.client
   }
+
+  // Memory management
+  HEAPSNAP = new memwatch.HeapDiff()
+  //setTimeout(function() {
+  memwatch.on('leak', function(info) {
+    if (process.memoryUsage().rss > 0) {
+      this.shutdown(CONF.sigterm_shutdown_timeout, function() {
+        LOG.info('Heap Diff: \n', u.inspect(HEAPSNAP.end(), false, null))
+
+        LOG.info('([~~~ Exiting ~~~])')
+
+        process.exit(0)
+      })
+    }
+  }.bind(this))
+  //}.bind(this), 1000)
 }
 
 
