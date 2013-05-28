@@ -6,5 +6,6 @@ module.exports = {
     ,sigterm_shutdown_timeout: 5 * MINUTES
     ,garbage_collect: true
     ,admin_url_prefix: 'd2'
+    ,rss_threshold: 128e6
 }
 

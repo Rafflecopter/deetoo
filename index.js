@@ -137,7 +137,7 @@ var DeeToo = function(config) {
   HEAPSNAP = new memwatch.HeapDiff()
   //setTimeout(function(info) {
   memwatch.on('leak', function(info) {
-    if (process.memoryUsage().rss > (CONF.rss_threshold || 128000000)) {
+    if (process.memoryUsage().rss > CONF.rss_threshold) {
       this.shutdown(CONF.sigterm_shutdown_timeout, function() {
         LOG.warn('Leak detected ---> Heap Diff: \n', 
                  u.inspect(HEAPSNAP.end(), false, null))
