@@ -104,7 +104,7 @@ var _stopListening = function($done) {
   LOG.info('([> Shutting down all listeners... <])')
   async.forEach(__dialects, dstop, function(err) {
     if (err) return $_done(err);
-    WWW.close($done)
+    WWW.close($done)  // TODO: we should still shut down if this times out
     __running.listen = false
     LOG.info('([> All listeners have stopped listening. <])')
   })
@@ -194,14 +194,24 @@ _.extend(DeeToo.prototype, {
     })
   }
 
+  /*
+   * Params:
+   *    - timeout: after waiting this long for jobs to finish, kill the process
+   *    - deaf: shut down the HTTP server after waiting for it to finish responding
+   */
   ,shutdown: function(timeout, deaf, $done) {
-    function _optArgs() {   // timeout & deaf are both optional
+    function _optArgs() {
+      // TODO: this logic is a bit convoluted
+
       if (deaf === undefined) {
         $done=timeout; timeout=null;
       } else if (! $done) { // infer which arg was passed
         $done = deaf;
         deaf = !_.isFinite(timeout) ? timeout : null
         timeout = !!deaf ? null : timeout
+
+        if (timeout === true)
+          timeout = CONF.sigterm_shutdown_timeout;
       }
 
       $done = $done || _nullfunc
