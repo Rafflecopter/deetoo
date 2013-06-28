@@ -1,4 +1,5 @@
-var Dialects = require('./lib/dialects')
+var MemChecker = require('./lib/memchecker')
+  , Dialects = require('./lib/dialects')
   , util = require('./lib/util')
   , express = require('express')
   , _ = require('underscore')
@@ -18,7 +19,7 @@ var Dialects = require('./lib/dialects')
 
   , _nullfunc = function(){}
 
-  , JOBS
+  , JOBS, MEM
 
 
 
@@ -125,6 +126,8 @@ var DeeToo = function(config) {
 
   this.log = LOG
   this.jobs = JOBS
+
+  MEM = new MemChecker(this, CONF.memChecker)
 
   this._ = {
      www: WWW
