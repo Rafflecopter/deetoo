@@ -210,6 +210,7 @@ _DOCUMENTATION COMING SOON_
 ## TODO
 * Add [Cluster](http://nodejs.org/api/cluster.html) for better CPU utilization on multicore machines
 * Add other dialects besides HTTP (eyeing [Axon](https://github.com/visionmedia/axon), 0mq, and raw TCP)
+* Add documentation about memory leak detection
 
 
         
