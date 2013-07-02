@@ -1,6 +1,7 @@
 var CONF = {
   memChecker: {
-    memLimit: 50
+     memLimit: 50
+    ,tickInterval: 3
   }
 }
 
@@ -9,11 +10,11 @@ d2.speaks('http').can('test', function(f){f()}).start()
 
 var LEAK = []
 
-//setInterval(function() {
-  //for (var i = 0; i < 100000; i++) {
-    //LEAK.push('shiner is a dog')
-  //}
-//}, 1000)
+setInterval(function() {
+  for (var i = 0; i < 100000; i++) {
+    LEAK.push('hello world where are the elephants?')
+  }
+}, 1000)
 
 /*
  * stdout should look something like this:
